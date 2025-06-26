@@ -6,6 +6,8 @@ import openai
 from dotenv import load_dotenv
 import os
 
+from bot.gpt_role import build_role_prompt
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -30,9 +32,11 @@ def handle_message(event):
     if hasattr(event.message, "text"):
         user_text = event.message.text
 
+        # 這裡換成自訂prompt
+        prompt = build_role_prompt(user_text)
         resp = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_text}]
+            messages=[{"role": "system", "content": prompt}]
         )
         gpt_reply = resp.choices[0].message.content
         reply = ReplyMessageRequest(
