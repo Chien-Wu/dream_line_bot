@@ -1,14 +1,16 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()  # <-- 一定要最上面先執行
+
+print("TEST KEY APP:", os.getenv("OPENAI_API_KEY"))
+
 from flask import Flask, request, abort
 from linebot.v3.messaging import MessagingApi, Configuration, ApiClient, ReplyMessageRequest, TextMessage
 from linebot.v3.webhook import WebhookHandler, MessageEvent
 from linebot.v3.exceptions import InvalidSignatureError
 import openai
-from dotenv import load_dotenv
-import os
 
-from bot.gpt_role import build_role_prompt
-
-load_dotenv()
+from bot.message_handler import generate_reply
 
 app = Flask(__name__)
 
@@ -30,15 +32,10 @@ def callback():
 @handler.add(MessageEvent)
 def handle_message(event):
     if hasattr(event.message, "text"):
+        user_id = event.source.user_id
         user_text = event.message.text
-
-        # 這裡換成自訂prompt
-        prompt = build_role_prompt(user_text)
-        resp = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "system", "content": prompt}]
-        )
-        gpt_reply = resp.choices[0].message.content
+        # 可考慮用user_id取對話歷史, 現在簡單直接丟
+        gpt_reply = generate_reply(user_id, user_text)
         reply = ReplyMessageRequest(
             reply_token=event.reply_token,
             messages=[TextMessage(text=gpt_reply)]
