@@ -2,8 +2,6 @@ import os
 from dotenv import load_dotenv
 load_dotenv()  # <-- 一定要最上面先執行
 
-print("TEST KEY APP:", os.getenv("OPENAI_API_KEY"))
-
 from flask import Flask, request, abort
 from linebot.v3.messaging import MessagingApi, Configuration, ApiClient, ReplyMessageRequest, TextMessage
 from linebot.v3.webhook import WebhookHandler, MessageEvent

@@ -2,9 +2,6 @@ from services.faq_retriever import find_top_faqs
 import openai
 import os
 
-print("TEST KEY:", os.getenv("OPENAI_API_KEY"))
-
-
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_reply(user_id, user_text, user_history=None):
@@ -12,7 +9,7 @@ def generate_reply(user_id, user_text, user_history=None):
     faq_block = "\n".join([f"Q: {f['q']}\nA: {f['a']}" for f in top_faqs])
 
     system_prompt = (
-        "你是台灣一起夢想公益協會的智能助理。根據以下FAQ資料，並參考上下文對話，請以親切且專業的語氣回答問題。\n"
+        "你是台灣一起夢想公益協會的服務大使，以熱情公益與親切的語氣回答問題。參考以下FAQ資料與上下文。\n"
         + faq_block
     )
 
@@ -22,7 +19,7 @@ def generate_reply(user_id, user_text, user_history=None):
     messages.append({"role": "user", "content": user_text})
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4.1-mini",
         messages=messages
     )
     return response.choices[0].message.content
