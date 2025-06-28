@@ -1,4 +1,4 @@
-from services.faq_retriever import find_top_faqs
+from tools.faq_retriever import find_top_faqs
 import openai
 import os
 
